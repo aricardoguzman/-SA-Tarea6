@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+    mongo:
+        build: ./mongo/
+        image: mongo
+        command: mongod --port 27018
+        volumes:
+            - ./mongo/data:/data/db
+        environment:
+            MONGO_INITDB_DATABASE: "sa"
+        ports:
+            - 27018:27018
+        container_name: mongo
+    api:
+        build: ./api/
+        restart: always
+        ports:
+            - 3000:3000
+        links:
+            - mongo:mongo
+        container_name: api-app
+        environment:
+            MONGO_DB_NAME: "sa"
+            MONGODB_URI: "mongodb://mongo:27018"
+            PORT: 27018
+        command: npm start
